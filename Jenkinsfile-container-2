@@ -16,24 +16,12 @@ pipeline {
     }
     stage('Generate SBOM') {
       steps {
-        sh 'syft packages java-docker:latest --scope AllLayers -o json > ./java-docker-sbom.json'
-      }
-    }
-    stage('Does ant exist?') {
-      steps {
-        script {
-          def antFound = sh(returnStatus:true,script:'''
-              cat ./java-docker-sbom.json | jq -e '.artifacts[] | select(.name =="ant")'
-            ''')
-          if(antFound == 0) {
-            error(message:"ant was found in the SBOM. It should not be there.")
-          }
-        }
+        sh 'grype java-docker:latest --scope AllLayers --fail-on=critical'
       }
     }
     stage('Finally done') {
       steps {
-        echo 'if I made it here, no ant was found'
+        echo 'if I made it here, no critical items were found'
       }
     }
   }

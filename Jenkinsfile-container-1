@@ -13,7 +13,7 @@ pipeline {
     }
     stage('Generate SBOM') {
       steps {
-        sh 'syft packages java-docker:latest --scope AllLayers'
+        sh 'grype java-docker:latest --scope AllLayers'
       }
     }
   }
