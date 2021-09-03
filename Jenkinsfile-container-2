@@ -21,9 +21,14 @@ pipeline {
     }
     stage('Does ant exist?') {
       steps {
-        sh '''
-          cat ./java-docker-sbom.json | jq -e '.artifacts[] | select(.name =="ant")'
-        '''
+        script {
+          def antFound = sh(returnStatus:true,script:'''
+              cat ./java-docker-sbom.json | jq -e '.artifacts[] | select(.name =="ant")'
+            ''')
+          if(antFound == 0) {
+            error()
+          }
+        }
       }
     }
     stage('Finally done') {
