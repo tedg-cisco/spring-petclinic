@@ -1,0 +1,10 @@
+pipeline {
+  agent any
+  stages {
+    stage('Generate SBOM') {
+      steps {
+        sh 'syft packages dir:. --scope AllLayers'
+      }
+    }
+  }
+}
