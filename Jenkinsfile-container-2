@@ -26,7 +26,7 @@ pipeline {
               cat ./java-docker-sbom.json | jq -e '.artifacts[] | select(.name =="ant")'
             ''')
           if(antFound == 0) {
-            error()
+            error(message:"ant was found in the SBOM. It should not be there.")
           }
         }
       }
