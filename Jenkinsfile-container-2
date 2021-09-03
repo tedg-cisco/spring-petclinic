@@ -19,5 +19,17 @@ pipeline {
         sh 'syft packages java-docker:latest --scope AllLayers -o json > ./java-docker-sbom.json'
       }
     }
+    stage('Does ant exist?') {
+      steps {
+        sh '''
+          cat image-sbom.json | jq -e '.artifacts[] | select(.name =="ant")'
+        '''
+      }
+    }
+    stage('Finally done') {
+      steps {
+        echo 'if I made it here, no ant was found'
+      }
+    }
   }
 }
