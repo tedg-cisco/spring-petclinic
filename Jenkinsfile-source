@@ -6,9 +6,9 @@ pipeline {
         sh './mvnw clean package -Dcheckstyle.skip'
       }
     }
-    stage('Generate SBOM') {
+    stage('Scan') {
       steps {
-        sh 'syft packages dir:. --scope AllLayers'
+        sh 'grype dir:. --scope AllLayers'
       }
     }
   }
