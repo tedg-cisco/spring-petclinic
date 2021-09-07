@@ -11,7 +11,7 @@ pipeline {
         sh 'docker build --tag java-docker:latest .'
       }
     }
-    stage('Generate SBOM') {
+    stage('Run Vulnerability Scan') {
       steps {
         sh 'grype java-docker:latest --scope AllLayers'
       }
