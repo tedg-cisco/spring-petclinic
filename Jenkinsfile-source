@@ -8,7 +8,6 @@ pipeline {
     }
     stage('Generate SBOM') {
       steps {
-#        sh 'syft packages dir:. --scope AllLayers'
         sh 'syft scan dir:. -o spdx-json@2.3  > spdx.json'
       }
     }
