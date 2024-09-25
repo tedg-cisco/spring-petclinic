@@ -11,5 +11,10 @@ pipeline {
         sh 'syft scan dir:. -o spdx-json@2.3  > spring-petclinic.spdx.json'
       }
     }
+    stage('Push SBOM to Corona') {
+      steps {
+        sh 'python3 create_image_spdx.py'
+      }
+    }
   }
 }
