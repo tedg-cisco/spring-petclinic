@@ -13,7 +13,7 @@ pipeline {
     }
     stage('Push SBOM to Corona') {
       steps {
-        sh 'python3 create_image_spdx.py'
+        sh 'python3 create_image_spdx_4_syft_ws.py'
       }
     }
   }
