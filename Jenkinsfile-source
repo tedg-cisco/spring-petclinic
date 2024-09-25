@@ -8,7 +8,7 @@ pipeline {
     }
     stage('Generate SBOM') {
       steps {
-        sh 'syft scan dir:. -o spdx-json@2.3  > spdx.json'
+        sh 'syft scan dir:. -o spdx-json@2.3  > spring-petclinic.spdx.json'
       }
     }
   }
