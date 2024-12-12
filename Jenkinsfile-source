@@ -9,7 +9,9 @@ pipeline {
     stage('Generate SBOM') {
       steps {
         sh 'syft scan dir:. -o spdx-json@2.3  > spring-petclinic.spdx.json'
-        sh 'cat spring-petclinic.spdx.json'
+        sh 'ls -alt spring-petclinic.spdx.json'
+        sh 'pwd'
+        sh 'find . -type d -print'
       }
     }
 //    stage('Push SBOM to Corona') {
