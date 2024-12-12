@@ -9,12 +9,13 @@ pipeline {
     stage('Generate SBOM') {
       steps {
         sh 'syft scan dir:. -o spdx-json@2.3  > spring-petclinic.spdx.json'
+        sh 'cat spring-petclinic.spdx.json'
       }
     }
-    stage('Push SBOM to Corona') {
-      steps {
-        sh 'python3 create_image_spdx_4_syft_ws.py'
-      }
-    }
+//    stage('Push SBOM to Corona') {
+//      steps {
+//        sh 'python3 create_image_spdx_4_syft_ws.py'
+//      }
+//    }
   }
 }
