@@ -35,6 +35,7 @@ pipeline {
       steps {
         sh 'ls -alt spring-petclinic.spdx.json'
         sh 'pwd'
+        sh 'tail --bytes=250 spring-petclinic.spdx.json'
         sh '''
           docker run \
               -e CORONA_PAT="$CORONA_PAT" \
