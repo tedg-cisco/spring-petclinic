@@ -36,7 +36,7 @@ pipeline {
         sh 'ls -alt $CORONA_SPDX_FILE_PATHn'
         sh 'pwd'
         sh 'tail --bytes=250 $CORONA_SPDX_FILE_PATH'
-//        sh 'docker pull containers.cisco.com/tedg/upload_spdx'
+        sh 'docker pull containers.cisco.com/tedg/upload_spdx'
         sh '''
           docker ps
           docker ps -a
