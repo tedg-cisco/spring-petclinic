@@ -1,5 +1,21 @@
 pipeline {
   agent any
+
+  // Added for upload_spdx_to_corona
+  environment {
+    CORONA_PAT = credentials('corona-pat')
+    CORONA_HOST = 'corona.cisco.com'
+    CORONA_USERNAME = 'tedgcisco.gen'
+    CORONA_ENGINEERING_CONTACT = 'tedg-corona-eng-mailer'
+    CORONA_SECURITY_CONTACT = 'tedg-corona-sec-mailer'
+    // These env variables specify the Corona Product/Release/Image 
+    // and locally created SPDX file to upload
+    CORONA_PRODUCT_NAME = 'TEST - spring-petclinic SPDX Upload'
+    CORONA_RELEASE_VERSION = '1.0.0'
+    CORONA_IMAGE_NAME = 'spring-petclinic.spdx.json.01'
+    CORONA_SPDX_FILE_PATH = './spring-petclinic.spdx.json'
+  }
+
   stages {
     stage('build') {
       steps {
@@ -14,11 +30,24 @@ pipeline {
         sh 'find . -type d -print'
       }
     }
-//    stage('Push SBOM to Corona') {
-//      steps {
-//        sh 'python3 upload_spdx.py'
-//        docker run containers.cisco.com/upload_spdx:latest
-//      }
-//    }
+
+  // Added for upload_spdx_to_corona
+    stage('Push SBOM to Corona') {
+      steps {
+        sh '''
+          docker run \
+              -e CORONA_PAT="$CORONA_PAT" \
+              -e CORONA_HOST="$CORONA_HOST" \
+              -e CORONA_USERNAME="$CORONA_USERNAME" \
+              -e CORONA_ENGINEERING_CONTACT="$CORONA_ENGINEERING_CONTACT" \
+              -e CORONA_SECURITY_CONTACT="$CORONA_SECURITY_CONTACT" \
+              -e CORONA_PRODUCT_NAME="$CORONA_PRODUCT_NAME" \
+              -e CORONA_RELEASE_VERSION="$CORONA_RELEASE_VERSION" \
+              -e CORONA_IMAGE_NAME="$CORONA_IMAGE_NAME" \
+              -e CORONA_SPDX_FILE_PATH="$CORONA_SPDX_FILE_PATH" \
+              containers.cisco.com/tedg/upload_spdx 
+        '''
+      }
+    }
   }
 }
