@@ -13,7 +13,7 @@ pipeline {
     CORONA_PRODUCT_NAME = 'TEST - spring-petclinic SPDX Upload'
     CORONA_RELEASE_VERSION = '1.0.0'
     CORONA_IMAGE_NAME = 'spring-petclinic.spdx.json.01'
-    CORONA_SPDX_FILE_PATH = './spring-petclinic.spdx.json'
+    CORONA_SPDX_FILE_PATH = 'spring-petclinic.spdx.json'
   }
 
   stages {
@@ -30,9 +30,11 @@ pipeline {
       }
     }
 
-  // Added for upload_spdx_to_corona
+    // Added for upload_spdx_to_corona
     stage('Push SBOM to Corona') {
       steps {
+        sh 'ls -alt spring-petclinic.spdx.json'
+        sh 'pwd'
         sh '''
           docker run \
               -e CORONA_PAT="$CORONA_PAT" \
