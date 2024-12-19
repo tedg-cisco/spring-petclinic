@@ -24,8 +24,8 @@ pipeline {
     }
     stage('Generate SBOM') {
       steps {
-        sh 'syft scan dir:. -o spdx-json@2.3  > spring-petclinic.spdx.json'
-        sh 'ls -alt spring-petclinic.spdx.json'
+        sh 'syft scan dir:. -o spdx-json@2.3  > $CORONA_SPDX_FILE_PATH'
+        sh 'ls -alt $CORONA_SPDX_FILE_PATHn'
         sh 'pwd'
       }
     }
@@ -33,10 +33,10 @@ pipeline {
     // Added for upload_spdx_to_corona
     stage('Push SBOM to Corona') {
       steps {
-        sh 'ls -alt spring-petclinic.spdx.json'
+        sh 'ls -alt $CORONA_SPDX_FILE_PATHn'
         sh 'pwd'
-        sh 'tail --bytes=250 spring-petclinic.spdx.json'
-        sh 'docker pull containers.cisco.com/tedg/upload_spdx'
+        sh 'tail --bytes=250 $CORONA_SPDX_FILE_PATH'
+//        sh 'docker pull containers.cisco.com/tedg/upload_spdx'
         sh '''
           docker ps
           docker ps -a
@@ -53,6 +53,7 @@ pipeline {
               -e CORONA_RELEASE_VERSION="$CORONA_RELEASE_VERSION" \
               -e CORONA_IMAGE_NAME="$CORONA_IMAGE_NAME" \
               -e CORONA_SPDX_FILE_PATH="$CORONA_SPDX_FILE_PATH" \
+              -v \$CORONA_SPDX_FILE_PATH:$CORONA_SPDX_FILE_PATH \
               containers.cisco.com/tedg/upload_spdx 
         '''
       }
