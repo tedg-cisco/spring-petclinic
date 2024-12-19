@@ -38,6 +38,11 @@ pipeline {
         sh 'tail --bytes=250 spring-petclinic.spdx.json'
         sh 'docker pull containers.cisco.com/tedg/upload_spdx'
         sh '''
+          docker ps
+          docker ps -a
+          docker ps -a -q
+        '''
+        sh '''
           docker run \
               -e CORONA_PAT="$CORONA_PAT" \
               -e CORONA_HOST="$CORONA_HOST" \
