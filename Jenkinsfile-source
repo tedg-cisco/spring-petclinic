@@ -43,7 +43,8 @@ pipeline {
           docker ps -a -q
         '''
         sh '''
-          docker run \
+          docker run -d \
+              --name my-running-container \
               -e CORONA_PAT="$CORONA_PAT" \
               -e CORONA_HOST="$CORONA_HOST" \
               -e CORONA_USERNAME="$CORONA_USERNAME" \
