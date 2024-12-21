@@ -54,7 +54,7 @@ pipeline {
               -e CORONA_RELEASE_VERSION="$CORONA_RELEASE_VERSION" \
               -e CORONA_IMAGE_NAME="$CORONA_IMAGE_NAME" \
               -e CORONA_SPDX_FILE_PATH="$CORONA_SPDX_FILE_PATH" \
-              -v \$CORONA_SPDX_FILE_PATH:$CORONA_SPDX_FILE_PATH \
+              -v \$(PWD)/$CORONA_SPDX_FILE_PATH:/$CORONA_SPDX_FILE_PATH \
               containers.cisco.com/tedg/upload_spdx 
         '''
       }
