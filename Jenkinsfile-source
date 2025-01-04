@@ -26,22 +26,13 @@ pipeline {
       steps {
         sh 'syft scan dir:. -o spdx-json@2.3  > $(PWD)/$CORONA_SPDX_FILE_PATH'
         sh 'ls -alt $(PWD)/$CORONA_SPDX_FILE_PATH'
-        sh 'pwd'
       }
     }
 
     // Added for upload_spdx_to_corona
     stage('Push SBOM to Corona') {
       steps {
-        sh 'ls -alt $CORONA_SPDX_FILE_PATH'
-        sh 'pwd'
-        sh 'tail --bytes=250 $CORONA_SPDX_FILE_PATH'
         sh 'docker pull containers.cisco.com/tedg/upload_spdx'
-        sh '''
-          docker ps
-          docker ps -a
-          docker ps -a -q
-        '''
         sh '''
           docker run -d \
               -e CORONA_PAT="$CORONA_PAT" \
