@@ -53,7 +53,7 @@ pipeline {
               -e CORONA_RELEASE_VERSION="$CORONA_RELEASE_VERSION" \
               -e CORONA_IMAGE_NAME="$CORONA_IMAGE_NAME" \
               -e CORONA_SPDX_FILE_PATH="$CORONA_SPDX_FILE_PATH" \
-              -v \$(PWD)/$CORONA_SPDX_FILE_PATH:/data/$CORONA_SPDX_FILE_PATH \
+              -v /Users/tedg/.jenkins/workspace/syft/spring-petclinic.spdx.json:/data/spring-petclinic.spdx.json \
               containers.cisco.com/tedg/upload_spdx 
         '''
       }
