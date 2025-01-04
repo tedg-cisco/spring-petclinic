@@ -33,7 +33,7 @@ pipeline {
     // Added for upload_spdx_to_corona
     stage('Push SBOM to Corona') {
       steps {
-        sh 'ls -alt $CORONA_SPDX_FILE_PATHn'
+        sh 'ls -alt $CORONA_SPDX_FILE_PATH'
         sh 'pwd'
         sh 'tail --bytes=250 $CORONA_SPDX_FILE_PATH'
         sh 'docker pull containers.cisco.com/tedg/upload_spdx'
