@@ -25,7 +25,7 @@ pipeline {
     stage('Generate SBOM') {
       steps {
         sh 'syft scan dir:. -o spdx-json@2.3  > $(PWD)/$CORONA_SPDX_FILE_PATH'
-        sh 'ls -alt $(PWD)/$CORONA_SPDX_FILE_PATHn'
+        sh 'ls -alt $(PWD)/$CORONA_SPDX_FILE_PATH'
         sh 'pwd'
       }
     }
@@ -54,7 +54,7 @@ pipeline {
               -e CORONA_RELEASE_VERSION="$CORONA_RELEASE_VERSION" \
               -e CORONA_IMAGE_NAME="$CORONA_IMAGE_NAME" \
               -e CORONA_SPDX_FILE_PATH="$CORONA_SPDX_FILE_PATH" \
-              -v \$(PWD)/$CORONA_SPDX_FILE_PATH:/$CORONA_SPDX_FILE_PATH \
+              -v \$(PWD)/$CORONA_SPDX_FILE_PATH:/data/$CORONA_SPDX_FILE_PATH \
               containers.cisco.com/tedg/upload_spdx 
         '''
       }
