@@ -24,7 +24,7 @@ pipeline {
     }
     stage('Generate SBOM') {
       steps {
-        sh 'syft scan dir:./src  --exclude /src/test -o spdx-json@2.3  > $(PWD)/$CORONA_SPDX_FILE_PATH'
+        sh 'syft scan dir:./src  --exclude ./src/test -o spdx-json@2.3  > $(PWD)/$CORONA_SPDX_FILE_PATH'
         sh 'ls -alt $(PWD)/$CORONA_SPDX_FILE_PATH'
       }
     }
