@@ -12,8 +12,8 @@ pipeline {
     // and locally created SPDX file to upload
     CORONA_PRODUCT_NAME = 'Test - spring-petclinic SPDX Upload'
     CORONA_RELEASE_VERSION = '1.0.0'
-    CORONA_IMAGE_NAME = 'spring-petclinic.spdx.json.2025.01.15' + ".${env.BUILD_NUMBER}"
-    CORONA_SPDX_FILE_PATH = 'spring-petclinic.spdx.json.2025.01.15' + ".${env.BUILD_NUMBER}"
+    CORONA_IMAGE_NAME = 'spring-petclinic.spdx.json.2025.01.22' + ".${env.BUILD_NUMBER}"
+    CORONA_SPDX_FILE_PATH = 'spring-petclinic.spdx.json.2025.01.22' + ".${env.BUILD_NUMBER}"
   }
 
   stages {
