@@ -2,26 +2,26 @@ pipeline {
   agent any
 
   environment {
-    CORONA_SPDX_FILE_PATH = 'spring-petclinic.spdx.json'
+    BASE_JSON_FILE = 'spring-petclinic.spdx.json'
   }
 
   stages {
     stage('Generate SBOM') {
       steps {
         script {
-          echo "Initial CORONA_SPDX_FILE_PATH = ${env.CORONA_SPDX_FILE_PATH}"
+          echo "Initial BASE_JSON_FILE = ${env.BASE_JSON_FILE}"
 
           def today = sh(script: 'date +%Y.%m.%d', returnStdout: true).trim()
-          def base = env.CORONA_SPDX_FILE_PATH.replaceAll(/\.json$/, '')
-          def modifiedFileName = "${base}.${env.BUILD_NUMBER}.${today}.json"
+          def baseName = env.BASE_JSON_FILE.replaceAll(/\.json$/, '')
+          def modifiedName = "${baseName}.${env.BUILD_NUMBER}.${today}.json"
 
-          // Export it so it persists to next stage
-          env.CORONA_SPDX_FILE_PATH = modifiedFileName
+          echo "Generated modifiedName = ${modifiedName}"
 
-          echo "Updated CORONA_SPDX_FILE_PATH: ${env.CORONA_SPDX_FILE_PATH}"
+          // Save to another env variable for this build lifetime
+          env.CORONA_SPDX_FILE_PATH = modifiedName
 
-          // Use it in the shell
-          sh "syft scan dir:. --exclude ./src/test -o spdx-json@2.3 > ${env.CORONA_SPDX_FILE_PATH}"
+          // Create the SBOM file with Syft
+          sh "syft scan dir:. --exclude ./src/test -o spdx-json@2.3 > '${modifiedName}'"
         }
       }
     }
@@ -29,15 +29,11 @@ pipeline {
     stage('Push SBOM to Corona') {
       steps {
         script {
-          echo "CORONA_SPDX_FILE_PATH in Push stage: ${env.CORONA_SPDX_FILE_PATH}"
+          def filename = env.CORONA_SPDX_FILE_PATH
+          echo "CORONA_SPDX_FILE_PATH in push stage: ${filename}"
 
-          // Just demonstrating the value is preserved
-          sh "ls -l ${env.CORONA_SPDX_FILE_PATH}"
-
-          // Dummy command simulating Docker usage
-          sh """
-            echo 'Would run Docker with file: ${env.CORONA_SPDX_FILE_PATH}'
-          """
+          sh "ls -l '${filename}'"
+          sh "echo 'Would run Docker with file: ${filename}'"
         }
       }
     }
