@@ -25,15 +25,14 @@ pipeline {
     stage('Generate SBOM') {
       steps {
 
-        script {
-          def currentDate = new Date().format("yyyy.MM.dd")
-          def buildNum = ${env.BUILD_NUMBER}
-          def resultFileBase = $CORONA_SPDX_FILE
-          def extension = ".json"
+        sh 'def currentDate = new Date().format("yyyy.MM.dd")'
+        sh 'def buildNum = ${env.BUILD_NUMBER}'
+        sh 'def resultFileBase = $CORONA_SPDX_FILE'
+        sh 'def extension = ".json"'
             
-          env.CORONA_SPDX_FILE_PATH = "${resultFileBase}_${currentDate}_build${buildNum}${extension}"
-        }
-        sh 'echo "Generated file name: ${env.FILE_NAME_WITH_DATE}"'
+        sh 'env.CORONA_SPDX_FILE_PATH = "${resultFileBase}_${currentDate}_build${buildNum}${extension}"'
+
+        sh 'echo "Generated file name: ${env.CORONA_SPDX_FILE_PATH}"'
         // You can now use ${env.FILE_NAME_WITH_DATE} elsewhere in this stage or pipeline
 
         sh 'syft scan dir:. --exclude ./src/test -o spdx-json@2.3  > $(PWD)/$CORONA_SPDX_FILE_PATH'
