@@ -39,8 +39,8 @@ pipeline {
           def workspaceDir = pwd()
 
           // Create the SBOM file with Syft
-          sh "syft scan dir:. --exclude ./src/test -o spdx-json@2.3 > ${workspaceDir}/${modifiedName}"
-          sh "ls -alt ${workspaceDir}/${modifiedName}"
+          sh "syft scan dir:. --exclude ./src/test -o spdx-json@2.3 > \"\\\$(pwd)/${modifiedName}\""
+          sh "ls -alt \"\\\$(pwd)/${modifiedName}\""
         }
       }
     }
