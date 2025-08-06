@@ -48,6 +48,7 @@ pipeline {
       steps {
         sh 'docker pull containers.cisco.com/tedg/upload_spdx'
         sh """
+          echo "CORONA_IMAGE_NAME=${env.CORONA_IMAGE_NAME}, CORONA_SPDX_FILENAME_DATE_BUILD=${env.CORONA_SPDX_FILENAME_DATE_BUILD}"
           docker run -d \\
               -e CORONA_PAT="${env.CORONA_PAT}" \\
               -e CORONA_HOST="${env.CORONA_HOST}" \\
