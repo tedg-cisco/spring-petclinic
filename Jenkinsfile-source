@@ -32,7 +32,7 @@ pipeline {
         sh 'echo "TODAY=${TODAY}"'
 
         // Extract base name (without extension)
-        sh 'export BASE_NAME=$(basename "${CORONA_SPDX_FILE}" .json)'
+        sh 'export BASE_NAME=$(basename "${CORONA_SPDX_FILE_NAME}" .json)'
         sh 'echo "BASE_NAME=${BASE_NAME}"'
 
         // Construct the full name with date and build number
