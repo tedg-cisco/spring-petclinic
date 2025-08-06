@@ -68,7 +68,7 @@ pipeline {
               -e CORONA_PRODUCT_NAME="$CORONA_PRODUCT_NAME" \
               -e CORONA_RELEASE_VERSION="$CORONA_RELEASE_VERSION" \
               -e CORONA_IMAGE_NAME="$CORONA_IMAGE_NAME" \
-              -e CORONA_SPDX_FILENAME_DATE_BUILD="$CORONA_SPDX_FILENAME_DATE_BUILD" \
+              -e CORONA_SPDX_FILE_NAME="$CORONA_SPDX_FILENAME_DATE_BUILD" \
               -v \$(PWD)/$CORONA_SPDX_FILENAME_DATE_BUILD:/app/$CORONA_SPDX_FILENAME_DATE_BUILD \
               containers.cisco.com/tedg/upload_spdx 
         '''
