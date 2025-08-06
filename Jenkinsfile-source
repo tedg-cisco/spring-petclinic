@@ -25,24 +25,26 @@ pipeline {
         sh './mvnw clean package -Dcheckstyle.skip'
       }
     }
+
+
     stage('Generate SBOM') {
       steps {
         sh '''
-          // Extract date in YYYY.MM.DD format
+          # Extract date in YYYY.MM.DD format
           def TODAY=$(date +%Y.%m.%d)
           echo "TODAY=${TODAY}"
   
-          // Extract base name (without extension)
+          # Extract base name (without extension)
           def BASE_NAME=$(basename "${CORONA_SPDX_FILE_NAME}" .json)
           echo "BASE_NAME=${BASE_NAME}"
   
           echo "BASE_NAME=${BASE_NAME}, TODAY=${TODAY}, BUILD_NUMBER=${BUILD_NUMBER}"
   
-          // Construct the full name with date and build number
+          # Construct the full name with date and build number
           export CORONA_SPDX_FILENAME_DATE_BUILD="${BASE_NAME}_${TODAY}_${BUILD_NUMBER}.json"
           echo "CORONA_SPDX_FILENAME_DATE_BUILD=${CORONA_SPDX_FILENAME_DATE_BUILD}"
   
-          // Construct the full name with date and build number
+          # Construct the full name with date and build number
           export CORONA_IMAGE_NAME=${CORONA_SPDX_FILENAME_DATE_BUILD}
           echo "CORONA_IMAGE_NAME=${CORONA_IMAGE_NAME}"
   
