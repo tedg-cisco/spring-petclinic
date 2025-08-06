@@ -50,24 +50,26 @@ pipeline {
       steps {
         sh 'docker pull containers.cisco.com/tedg/upload_spdx'
 
-        def filename = env.CORONA_SPDX_FILE_PATH
-        echo "CORONA_SPDX_FILE_PATH in push stage: ${filename}"
-        sh "ls -l '${filename}'"
-
-        sh '''
-          docker run -d \
-              -e CORONA_PAT="$CORONA_PAT" \
-              -e CORONA_HOST="$CORONA_HOST" \
-              -e CORONA_USERNAME="$CORONA_USERNAME" \
-              -e CORONA_ENGINEERING_CONTACT="$CORONA_ENGINEERING_CONTACT" \
-              -e CORONA_SECURITY_CONTACT="$CORONA_SECURITY_CONTACT" \
-              -e CORONA_PRODUCT_NAME="$CORONA_PRODUCT_NAME" \
-              -e CORONA_RELEASE_VERSION="$CORONA_RELEASE_VERSION" \
-              -e CORONA_IMAGE_NAME="$CORONA_IMAGE_NAME" \
-              -e CORONA_SPDX_FILE_PATH="$filename" \
-              -v \$(PWD)/$filename:/app/$filename \
-              containers.cisco.com/tedg/upload_spdx 
-        '''
+        script {
+          def filename = env.CORONA_SPDX_FILE_PATH
+          echo "CORONA_SPDX_FILE_PATH in push stage: ${filename}"
+          sh "ls -alt '${filename}'"
+  
+          sh '''
+            docker run -d \
+                -e CORONA_PAT="$CORONA_PAT" \
+                -e CORONA_HOST="$CORONA_HOST" \
+                -e CORONA_USERNAME="$CORONA_USERNAME" \
+                -e CORONA_ENGINEERING_CONTACT="$CORONA_ENGINEERING_CONTACT" \
+                -e CORONA_SECURITY_CONTACT="$CORONA_SECURITY_CONTACT" \
+                -e CORONA_PRODUCT_NAME="$CORONA_PRODUCT_NAME" \
+                -e CORONA_RELEASE_VERSION="$CORONA_RELEASE_VERSION" \
+                -e CORONA_IMAGE_NAME="$CORONA_IMAGE_NAME" \
+                -e CORONA_SPDX_FILE_PATH="$filename" \
+                -v \$(PWD)/$filename:/app/$filename \
+                containers.cisco.com/tedg/upload_spdx 
+          '''
+        }
       }
     }
   }
