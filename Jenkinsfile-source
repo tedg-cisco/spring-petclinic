@@ -33,8 +33,8 @@ pipeline {
 
           echo "Updated CORONA_SPDX_FILE_PATH: ${env.CORONA_SPDX_FILE_PATH}"
         }
-        sh 'echo "after mod, CORONA_SPDX_FILE_PATH = ${env.CORONA_SPDX_FILE_PATH}"'
-        sh 'syft scan dir:. --exclude ./src/test -o spdx-json@2.3  > $(PWD)/$CORONA_SPDX_FILE_PATH'
+        sh "echo 'after mod, CORONA_SPDX_FILE_PATH = ${env.CORONA_SPDX_FILE_PATH}'"
+        sh 'syft scan dir:. --exclude ./src/test -o spdx-json@2.3  > $(PWD)/${env.CORONA_SPDX_FILE_PATH}'
         sh 'ls -alt $(PWD)/$CORONA_SPDX_FILE_PATH'
       }
     }
