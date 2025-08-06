@@ -35,6 +35,8 @@ pipeline {
         sh 'export BASE_NAME=$(basename "${CORONA_SPDX_FILE_NAME}" .json)'
         sh 'echo "BASE_NAME=${BASE_NAME}"'
 
+        sh 'echo "BASE_NAME=${BASE_NAME}, TODAY=${TODAY}, BUILD_NUMBER=${BUILD_NUMBER}"'
+
         // Construct the full name with date and build number
         sh 'export CORONA_SPDX_FILENAME_DATE_BUILD="${BASE_NAME}_${TODAY}_${BUILD_NUMBER}.json"'
         sh 'echo "CORONA_SPDX_FILENAME_DATE_BUILD=${CORONA_SPDX_FILENAME_DATE_BUILD}"'
