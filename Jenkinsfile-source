@@ -1,63 +1,44 @@
 pipeline {
   agent any
 
-  // Added for upload_spdx_to_corona
   environment {
-    CORONA_PAT = credentials('corona-pat')
-    CORONA_HOST = 'corona.cisco.com'
-    CORONA_USERNAME = 'tedgcisco.gen'
-    CORONA_ENGINEERING_CONTACT = 'tedg-corona-eng-mailer'
-    CORONA_SECURITY_CONTACT = 'tedg-corona-sec-mailer'
-    // These env variables specify the Corona Product/Release/Image 
-    // and locally created SPDX file to upload
-    CORONA_PRODUCT_NAME = 'Test - spring-petclinic SPDX Upload'
-    CORONA_RELEASE_VERSION = '1.0.0'
-    CORONA_IMAGE_NAME = 'spring-petclinic.spdx.json' + ".${env.BUILD_NUMBER}"
     CORONA_SPDX_FILE_PATH = 'spring-petclinic.spdx.json'
   }
 
   stages {
-    stage('build') {
-      steps {
-        sh './mvnw clean package -Dcheckstyle.skip'
-      }
-    }
     stage('Generate SBOM') {
       steps {
         script {
-          echo "Initial CORONA_SPDX_FILE_PATH = $CORONA_SPDX_FILE_PATH"
+          echo "Initial CORONA_SPDX_FILE_PATH = ${env.CORONA_SPDX_FILE_PATH}"
 
           def today = sh(script: 'date +%Y.%m.%d', returnStdout: true).trim()
           def base = env.CORONA_SPDX_FILE_PATH.replaceAll(/\.json$/, '')
-          env.CORONA_SPDX_FILE_PATH = "${base}.${env.BUILD_NUMBER}.${today}.json"
+          def modifiedFileName = "${base}.${env.BUILD_NUMBER}.${today}.json"
+
+          // Export it so it persists to next stage
+          env.CORONA_SPDX_FILE_PATH = modifiedFileName
 
           echo "Updated CORONA_SPDX_FILE_PATH: ${env.CORONA_SPDX_FILE_PATH}"
+
+          // Use it in the shell
+          sh "syft scan dir:. --exclude ./src/test -o spdx-json@2.3 > ${env.CORONA_SPDX_FILE_PATH}"
         }
-        sh "echo 'after mod, CORONA_SPDX_FILE_PATH = ${env.CORONA_SPDX_FILE_PATH}'"
-        sh 'syft scan dir:. --exclude ./src/test -o spdx-json@2.3  > $(PWD)/${env.CORONA_SPDX_FILE_PATH}'
-        sh 'ls -alt $(PWD)/$CORONA_SPDX_FILE_PATH'
       }
     }
 
-    // Added for upload_spdx_to_corona
     stage('Push SBOM to Corona') {
       steps {
-        sh 'docker pull containers.cisco.com/tedg/upload_spdx'
-        sh 'echo "CORONA_SPDX_FILE_PATH = ${env.CORONA_SPDX_FILE_PATH}"'
-        sh '''
-          docker run -d \
-              -e CORONA_PAT="$CORONA_PAT" \
-              -e CORONA_HOST="$CORONA_HOST" \
-              -e CORONA_USERNAME="$CORONA_USERNAME" \
-              -e CORONA_ENGINEERING_CONTACT="$CORONA_ENGINEERING_CONTACT" \
-              -e CORONA_SECURITY_CONTACT="$CORONA_SECURITY_CONTACT" \
-              -e CORONA_PRODUCT_NAME="$CORONA_PRODUCT_NAME" \
-              -e CORONA_RELEASE_VERSION="$CORONA_RELEASE_VERSION" \
-              -e CORONA_IMAGE_NAME="$CORONA_IMAGE_NAME" \
-              -e CORONA_SPDX_FILE_PATH="$CORONA_SPDX_FILE_PATH" \
-              -v \$(PWD)/$CORONA_SPDX_FILE_PATH:/app/$CORONA_SPDX_FILE_PATH \
-              containers.cisco.com/tedg/upload_spdx 
-        '''
+        script {
+          echo "CORONA_SPDX_FILE_PATH in Push stage: ${env.CORONA_SPDX_FILE_PATH}"
+
+          // Just demonstrating the value is preserved
+          sh "ls -l ${env.CORONA_SPDX_FILE_PATH}"
+
+          // Dummy command simulating Docker usage
+          sh """
+            echo 'Would run Docker with file: ${env.CORONA_SPDX_FILE_PATH}'
+          """
+        }
       }
     }
   }
