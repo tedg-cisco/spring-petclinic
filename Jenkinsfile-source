@@ -36,9 +36,11 @@ pipeline {
           // Save to another env variable for this build lifetime
           env.CORONA_SPDX_FILE_PATH = modifiedName
 
+          def workspaceDir = pwd()
+
           // Create the SBOM file with Syft
-          sh "syft scan dir:. --exclude ./src/test -o spdx-json@2.3 > '$(PWD)/${modifiedName}'"
-          sh "ls -alt '$(PWD)/${modifiedName}'"
+          sh "syft scan dir:. --exclude ./src/test -o spdx-json@2.3 > ${workspaceDir}/${modifiedName}"
+          sh "ls -alt ${workspaceDir}/${modifiedName}"
         }
       }
     }
