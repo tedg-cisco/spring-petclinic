@@ -27,7 +27,7 @@ pipeline {
     }
     stage('Generate SBOM') {
       steps {
-        script {
+        sh '''
           // Extract date in YYYY.MM.DD format
           export TODAY=$(date +%Y.%m.%d)
           echo "TODAY=${TODAY}"
@@ -48,7 +48,7 @@ pipeline {
   
           syft scan dir:. --exclude ./src/test -o spdx-json@2.3  > $(PWD)/$CORONA_SPDX_FILENAME_DATE_BUILD
           ls -alt $(PWD)/$CORONA_SPDX_FILENAME_DATE_BUILD
-        }
+        '''
       }
     }
 
