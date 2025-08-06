@@ -12,67 +12,62 @@ pipeline {
     // and locally created SPDX file to upload
     CORONA_PRODUCT_NAME = 'Test - spring-petclinic SPDX Upload'
     CORONA_RELEASE_VERSION = '1.0.0'
-    CORONA_IMAGE_NAME = 'spring-petclinic.spdx.json'
+    CORONA_IMAGE_NAME = 'spring-petclinic.spdx.json' // will be updated in Generate SBOM
     CORONA_SPDX_FILE_NAME = 'spring-petclinic.spdx.json'
-    // CORONA_SPDX_FILE_NAME created in Generate SBOM stage based on
-    // filename + date + build number
-    CORONA_SPDX_FILENAME_DATE_BUILD = ' '
+    CORONA_SPDX_FILENAME_DATE_BUILD = ' ' // will be updated in Generate SBOM
   }
 
   stages {
+
     stage('build') {
       steps {
         sh './mvnw clean package -Dcheckstyle.skip'
       }
     }
 
-
     stage('Generate SBOM') {
       steps {
-        sh '''
-          # Extract date in YYYY.MM.DD format
-          TODAY=$(date +%Y.%m.%d)
-          echo "TODAY=${TODAY}"
-  
-          # Extract base name (without extension)
-          BASE_NAME=$(basename "${CORONA_SPDX_FILE_NAME}" .json)
-          echo "BASE_NAME=${BASE_NAME}"
-  
-          echo "BASE_NAME=${BASE_NAME}, TODAY=${TODAY}, BUILD_NUMBER=${BUILD_NUMBER}"
-  
-          # Construct the full name with date and build number
-          export CORONA_SPDX_FILENAME_DATE_BUILD="${BASE_NAME}_${TODAY}_${BUILD_NUMBER}.json"
-          echo "CORONA_SPDX_FILENAME_DATE_BUILD=${CORONA_SPDX_FILENAME_DATE_BUILD}"
-  
-          # Change CORONA_IMAGE_NAME to include date and build number
-          export CORONA_IMAGE_NAME=${CORONA_SPDX_FILENAME_DATE_BUILD}
-          echo "CORONA_IMAGE_NAME=${CORONA_IMAGE_NAME}"
+        script {
+          // Get current date in YYYY.MM.DD
+          def today = sh(script: 'date +%Y.%m.%d', returnStdout: true).trim()
 
-          sh """
+          // Extract base name from CORONA_SPDX_FILE_NAME (strip ".json")
+          def baseName = sh(script: "basename '${env.CORONA_SPDX_FILE_NAME}' .json", returnStdout: true).trim()
+
+          // Create new filename
+          def newFileName = "${baseName}_${today}_${env.BUILD_NUMBER}.json"
+
+          // Set pipeline-wide environment variables
+          env.CORONA_SPDX_FILENAME_DATE_BUILD = newFileName
+          env.CORONA_IMAGE_NAME = newFileName
+
+          echo "CORONA_SPDX_FILENAME_DATE_BUILD=${env.CORONA_SPDX_FILENAME_DATE_BUILD}"
+
+          // Run syft and generate SPDX file
+          sh '''
             syft dir:. --exclude ./src/test -o spdx-json@2.3 > \$(pwd)/${env.CORONA_SPDX_FILENAME_DATE_BUILD}
             ls -alt \$(pwd)/${env.CORONA_SPDX_FILENAME_DATE_BUILD}
-          """
-        '''
+          '''
+        }
       }
     }
 
-    // Added for upload_spdx_to_corona
     stage('Push SBOM to Corona') {
       steps {
         sh 'docker pull containers.cisco.com/tedg/upload_spdx'
         sh '''
           docker run -d \
-              -e CORONA_PAT="$CORONA_PAT" \
-              -e CORONA_HOST="$CORONA_HOST" \
-              -e CORONA_USERNAME="$CORONA_USERNAME" \
-              -e CORONA_ENGINEERING_CONTACT="$CORONA_ENGINEERING_CONTACT" \
-              -e CORONA_SECURITY_CONTACT="$CORONA_SECURITY_CONTACT" \
-              -e CORONA_PRODUCT_NAME="$CORONA_PRODUCT_NAME" \
-              -e CORONA_RELEASE_VERSION="$CORONA_RELEASE_VERSION" \
-              -e CORONA_IMAGE_NAME="$CORONA_IMAGE_NAME" \
-              -e CORONA_SPDX_FILE_NAME="$CORONA_SPDX_FILENAME_DATE_BUILD" \
-              -v \$(PWD)/$CORONA_SPDX_FILENAME_DATE_BUILD:/app/$CORONA_SPDX_FILENAME_DATE_BUILD \
-              containers.cisco.com/tedg/upload_spdx 
+              -e CORONA_PAT="${env.CORONA_PAT}" \
+              -e CORONA_HOST="${env.CORONA_HOST}" \
+              -e CORONA_USERNAME="${env.CORONA_USERNAME}" \
+              -e CORONA_ENGINEERING_CONTACT="${env.CORONA_ENGINEERING_CONTACT}" \
+              -e CORONA_SECURITY_CONTACT="${env.CORONA_SECURITY_CONTACT}" \
+              -e CORONA_PRODUCT_NAME="${env.CORONA_PRODUCT_NAME}" \
+              -e CORONA_RELEASE_VERSION="${env.CORONA_RELEASE_VERSION}" \
+              -e CORONA_IMAGE_NAME="${env.CORONA_IMAGE_NAME}" \
+              -e CORONA_SPDX_FILE_NAME="${env.CORONA_SPDX_FILENAME_DATE_BUILD}" \
+              -v \$(pwd)/${env.CORONA_SPDX_FILENAME_DATE_BUILD}:/app/${env.CORONA_SPDX_FILENAME_DATE_BUILD} \
+              containers.cisco.com/tedg/upload_spdx
         '''
       }
     }
