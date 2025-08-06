@@ -37,10 +37,9 @@ pipeline {
           env.CORONA_SPDX_FILE_PATH = modifiedName
 
           // Create the SBOM file with Syft
-          sh "syft scan dir:. --exclude ./src/test -o spdx-json@2.3 > '${modifiedName}'"
+          sh "syft scan dir:. --exclude ./src/test -o spdx-json@2.3 > '$(PWD)/${modifiedName}'"
+          sh "ls -alt '$(PWD)/${modifiedName}'"
         }
-        # sh 'syft scan dir:. --exclude ./src/test -o spdx-json@2.3  > $(PWD)/$CORONA_SPDX_FILE_PATH'
-        # sh 'ls -alt $(PWD)/$CORONA_SPDX_FILE_PATH'
       }
     }
 
@@ -51,6 +50,7 @@ pipeline {
 
         def filename = env.CORONA_SPDX_FILE_PATH
         echo "CORONA_SPDX_FILE_PATH in push stage: ${filename}"
+        sh "ls -l '${filename}'"
 
         sh '''
           docker run -d \
