@@ -12,8 +12,10 @@ pipeline {
     // and locally created SPDX file to upload
     CORONA_PRODUCT_NAME = 'Test - spring-petclinic SPDX Upload'
     CORONA_RELEASE_VERSION = '1.0.0'
-    CORONA_IMAGE_NAME = 'spring-petclinic.spdx.json.2025.01.22' + ".${env.BUILD_NUMBER}"
-    CORONA_SPDX_FILE = 'spring-petclinic.spdx.json'
+    // CORONA_IMAGE_NAME created in Generate SBOM stage based on
+    // filename + date + build number
+    CORONA_IMAGE_NAME = ' '
+    CORONA_SPDX_FILE_NAME = 'spring-petclinic.spdx.json'
   }
 
   stages {
@@ -25,20 +27,23 @@ pipeline {
     stage('Generate SBOM') {
       steps {
 
-        sh 'def currentDate = new Date().format("yyyy.MM.dd")'
-        sh 'echo "currentDate = : $currentDate'
-        sh 'def buildNum = env.BUILD_NUMBER'
-        sh 'echo "buildNum = : $buildNum'
-        sh 'def resultFileBase = $CORONA_SPDX_FILE'
-        sh 'echo "resultFileBase = : $resultFileBase'
-        sh 'def extension = ".json"'
-            
-        sh 'env.CORONA_SPDX_FILE_PATH = "${resultFileBase}_${currentDate}_build${buildNum}${extension}"'
-        sh 'echo "CORONA_SPDX_FILE_PATH = : $CORONA_SPDX_FILE_PATH'
-        sh 'echo "Generated file name: ${env.CORONA_SPDX_FILE_PATH}"'
-        // You can now use ${env.FILE_NAME_WITH_DATE} elsewhere in this stage or pipeline
+        // Extract date in YYYY.MM.DD format
+        sh 'export TODAY=$(date +%Y.%m.%d)'
+        sh 'echo "TODAY=${TODAY}"'
 
-        sh 'syft scan dir:. --exclude ./src/test -o spdx-json@2.3  > $(PWD)/$CORONA_SPDX_FILE_PATH'
+        // Extract base name (without extension)
+        sh 'export BASE_NAME=$(basename "${CORONA_SPDX_FILE}" .json)'
+        sh 'echo "BASE_NAME=${BASE_NAME}"'
+
+        // Construct the full name with date and build number
+        sh 'export CORONA_SPDX_FILENAME_DATE_BUILD="${BASE_NAME}_${TODAY}_${BUILD_NUMBER}.json"'
+        sh 'echo "CORONA_SPDX_FILENAME_DATE_BUILD=${CORONA_SPDX_FILENAME_DATE_BUILD}"'
+
+        // Construct the full name with date and build number
+        sh 'export CORONA_IMAGE_NAME=${CORONA_SPDX_FILENAME_DATE_BUILD}'
+        sh 'echo "CORONA_IMAGE_NAME=${CORONA_IMAGE_NAME}"'
+
+        sh 'syft scan dir:. --exclude ./src/test -o spdx-json@2.3  > $(PWD)/$CORONA_SPDX_FILENAME_DATE_BUILD'
         sh 'ls -alt $(PWD)/$CORONA_SPDX_FILE_PATH'
       }
     }
