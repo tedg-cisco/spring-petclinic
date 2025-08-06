@@ -1,5 +1,3 @@
-
-
 pipeline {
   agent any
 
@@ -34,10 +32,10 @@ pipeline {
           env.CORONA_SPDX_FILE_PATH = "${base}.${env.BUILD_NUMBER}.${today}.json"
 
           echo "Updated CORONA_SPDX_FILE_PATH: env.CORONA_SPDX_FILE_PATH"
-
-          syft scan dir:. --exclude ./src/test -o spdx-json@2.3  > $(PWD)/$CORONA_SPDX_FILE_PATH
-          ls -alt $(PWD)/$CORONA_SPDX_FILE_PATH
         }
+        sh 'echo "after mod, CORONA_SPDX_FILE_PATH = $CORONA_SPDX_FILE_PATH"'
+        sh 'syft scan dir:. --exclude ./src/test -o spdx-json@2.3  > $(PWD)/$CORONA_SPDX_FILE_PATH'
+        sh 'ls -alt $(PWD)/$CORONA_SPDX_FILE_PATH'
       }
     }
 
