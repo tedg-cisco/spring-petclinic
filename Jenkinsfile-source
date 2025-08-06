@@ -43,10 +43,13 @@ pipeline {
 
           echo "CORONA_SPDX_FILENAME_DATE_BUILD=${env.CORONA_SPDX_FILENAME_DATE_BUILD}"
 
+          // Now pass the Groovy-evaluated variable into the shell
+          def spdxOutputFile = "${env.CORONA_SPDX_FILENAME_DATE_BUILD}"
+
           // Run syft and generate SPDX file
           sh '''
-            syft dir:. --exclude ./src/test -o spdx-json@2.3 > \$(pwd)/${env.CORONA_SPDX_FILENAME_DATE_BUILD}
-            ls -alt \$(pwd)/${env.CORONA_SPDX_FILENAME_DATE_BUILD}
+            syft dir:. --exclude ./src/test -o spdx-json@2.3 > \$(pwd)/${spdxOutputFile}
+            ls -alt \$(pwd)/${spdxOutputFile}
           '''
         }
       }
