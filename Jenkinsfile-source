@@ -31,9 +31,9 @@ pipeline {
           def base = env.CORONA_SPDX_FILE_PATH.replaceAll(/\.json$/, '')
           env.CORONA_SPDX_FILE_PATH = "${base}.${env.BUILD_NUMBER}.${today}.json"
 
-          echo "Updated CORONA_SPDX_FILE_PATH: env.CORONA_SPDX_FILE_PATH"
+          echo "Updated CORONA_SPDX_FILE_PATH: ${env.CORONA_SPDX_FILE_PATH}"
         }
-        sh 'echo "after mod, CORONA_SPDX_FILE_PATH = $CORONA_SPDX_FILE_PATH"'
+        sh 'echo "after mod, CORONA_SPDX_FILE_PATH = ${env.CORONA_SPDX_FILE_PATH}"'
         sh 'syft scan dir:. --exclude ./src/test -o spdx-json@2.3  > $(PWD)/$CORONA_SPDX_FILE_PATH'
         sh 'ls -alt $(PWD)/$CORONA_SPDX_FILE_PATH'
       }
@@ -43,7 +43,7 @@ pipeline {
     stage('Push SBOM to Corona') {
       steps {
         sh 'docker pull containers.cisco.com/tedg/upload_spdx'
-        sh 'echo "CORONA_SPDX_FILE_PATH = $CORONA_SPDX_FILE_PATH"'
+        sh 'echo "CORONA_SPDX_FILE_PATH = ${env.CORONA_SPDX_FILE_PATH}"'
         sh '''
           docker run -d \
               -e CORONA_PAT="$CORONA_PAT" \
