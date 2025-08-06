@@ -26,12 +26,15 @@ pipeline {
       steps {
 
         sh 'def currentDate = new Date().format("yyyy.MM.dd")'
-        sh 'def buildNum = ${env.BUILD_NUMBER}'
+        sh 'echo "currentDate = : $currentDate'
+        sh 'def buildNum = env.BUILD_NUMBER'
+        sh 'echo "buildNum = : $buildNum'
         sh 'def resultFileBase = $CORONA_SPDX_FILE'
+        sh 'echo "resultFileBase = : $resultFileBase'
         sh 'def extension = ".json"'
             
         sh 'env.CORONA_SPDX_FILE_PATH = "${resultFileBase}_${currentDate}_build${buildNum}${extension}"'
-
+        sh 'echo "CORONA_SPDX_FILE_PATH = : $CORONA_SPDX_FILE_PATH'
         sh 'echo "Generated file name: ${env.CORONA_SPDX_FILE_PATH}"'
         // You can now use ${env.FILE_NAME_WITH_DATE} elsewhere in this stage or pipeline
 
