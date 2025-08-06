@@ -31,11 +31,11 @@ pipeline {
       steps {
         sh '''
           # Extract date in YYYY.MM.DD format
-          def TODAY=$(date +%Y.%m.%d)
+          TODAY=$(date +%Y.%m.%d)
           echo "TODAY=${TODAY}"
   
           # Extract base name (without extension)
-          def BASE_NAME=$(basename "${CORONA_SPDX_FILE_NAME}" .json)
+          BASE_NAME=$(basename "${CORONA_SPDX_FILE_NAME}" .json)
           echo "BASE_NAME=${BASE_NAME}"
   
           echo "BASE_NAME=${BASE_NAME}, TODAY=${TODAY}, BUILD_NUMBER=${BUILD_NUMBER}"
