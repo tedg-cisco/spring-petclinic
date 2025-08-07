@@ -36,6 +36,8 @@ pipeline {
           // Save to another env variable for this build lifetime
           env.CORONA_SPDX_FILE_PATH = modifiedName
 
+          echo "*** Generate SBOM env.CORONA_SPDX_FILE_PATH update to = ${env.CORONA_SPDX_FILE_PATH}"
+
           // Create the SBOM file with Syft
           sh "syft scan dir:. --exclude ./src/test -o spdx-json@2.3 > '${modifiedName}'"
           sh "ls -alt '${modifiedName}'"
