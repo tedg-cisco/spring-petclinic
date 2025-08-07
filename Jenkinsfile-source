@@ -49,15 +49,15 @@ pipeline {
         sh 'docker pull containers.cisco.com/tedg/upload_spdx'
 
         script {
-          def filename = env.CORONA_SPDX_FILE_PATH
-          echo "CORONA_SPDX_FILE_PATH in push stage: ${filename}"
+          def fullPath = env.CORONA_SPDX_FILE_PATH
+          def fileNameOnly = fullPath.tokenize('/').last()
+          def workspaceDir = pwd()
+
+          echo "CORONA_SPDX_FILE_PATH in push stage: ${fullPath}"
+          echo "SBOM filename only: ${fileNameOnly}"
+          echo "Workspace directory: ${workspaceDir}"
   
           sh '''
-            def today = sh(script: 'date +%Y.%m.%d', returnStdout: true).trim()
-            def baseName = env.CORONA_SPDX_FILE_PATH.replaceAll(/\.json$/, '')
-            def modifiedName = "${pwd()}/${baseName}_${today}_${env.BUILD_NUMBER}.json"
-            echo "Push SBOM modifiedName = ${modifiedName}"
-
             docker run \
                 -e CORONA_PAT="$CORONA_PAT" \
                 -e CORONA_HOST="$CORONA_HOST" \
@@ -67,8 +67,8 @@ pipeline {
                 -e CORONA_PRODUCT_NAME="$CORONA_PRODUCT_NAME" \
                 -e CORONA_RELEASE_VERSION="$CORONA_RELEASE_VERSION" \
                 -e CORONA_IMAGE_NAME="$CORONA_IMAGE_NAME" \
-                -e CORONA_SPDX_FILE_PATH="$modifiedName" \
-                -v \$(PWD)/$filename:/app/$modifiedName \
+                -e CORONA_SPDX_FILE_PATH="$fullPath" \
+                -v \$(PWD)/$fullPath:/app/$fileNameOnly \
                 containers.cisco.com/tedg/upload_spdx 
           '''
         }
