@@ -54,9 +54,10 @@ pipeline {
 
         script {
           def fullPath = env.MODIFIED_SPDX_FILE_PATH
+          def fileNameOnly = fullPath.tokenize('/').last()
           def workspaceDir = pwd()
 
-          echo "*** CORONA_SPDX_FILE_PATH in push stage: ${fullPath}"
+          echo "*** CORONA_SPDX_FILE_PATH in push stage = ${fullPath}, fileNameOnly = ${fileNameOnly}"
           echo "Workspace directory: ${workspaceDir}"
   
           sh """
@@ -69,8 +70,8 @@ pipeline {
                 -e CORONA_PRODUCT_NAME="$CORONA_PRODUCT_NAME" \
                 -e CORONA_RELEASE_VERSION="$CORONA_RELEASE_VERSION" \
                 -e CORONA_IMAGE_NAME="$CORONA_IMAGE_NAME" \
-                -e CORONA_SPDX_FILE_PATH="$fullPath" \
-                -v \$(PWD)/$fullPath:/app/$fullPath \
+                -e CORONA_SPDX_FILE_PATH="$fileNameOnly" \
+                -v \$(PWD)/$fullPath:/app/$fileNameOnly \
                 containers.cisco.com/tedg/upload_spdx 
           """
         }
