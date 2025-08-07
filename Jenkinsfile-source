@@ -44,7 +44,7 @@ pipeline {
           sh "syft scan dir:. --exclude ./src/test -o spdx-json@2.3 > '${modifiedName}'"
           sh "ls -alt '${modifiedName}'"
           sh "jq '(.packages[] | select(.versionInfo == null) | .versionInfo) = "UNKNOWN"' '${modifiedName}' > 'fixed_${modifiedName}'"
-          sh '''jq '(.packages[] | select(.versionInfo == null) | .versionInfo) = "UNKNOWN"' '${modifiedName}' > 'fixed_${modifiedName}' '''
+          sh """ jq '(.packages[] | select(.versionInfo == null) | .versionInfo) = "UNKNOWN"' '${modifiedName}' > 'fixed_${modifiedName}' """
         }
       }
     }
