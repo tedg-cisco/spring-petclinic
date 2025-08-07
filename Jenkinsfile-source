@@ -26,19 +26,13 @@ pipeline {
       steps {
         script {
           // Added for upload_spdx_to_corona
-          def initialFilePath = env.CORONA_SPDX_FILE_PATH
-          echo "Initial CORONA_SPDX_FILE_PATH = ${initialFilePath}"
-
           def today = sh(script: 'date +%Y.%m.%d', returnStdout: true).trim()
+          def initialFilePath = env.CORONA_SPDX_FILE_PATH
           def baseName = initialFilePath.replaceAll(/\.json$/, '')
           def modifiedName = "${pwd()}/${baseName}_${today}_${env.BUILD_NUMBER}.json"
 
-          echo "*** Generate SBOM modified CORONA_SPDX_FILE_PATH = ${modifiedName}"
-
           // Save to another env variable for this build lifetime
           env.MODIFIED_SPDX_FILE_PATH = modifiedName
-
-          echo "*** Generate SBOM env.MODIFIED_SPDX_FILE_PATH update to = ${env.MODIFIED_SPDX_FILE_PATH}"
 
           // Create the SBOM file with Syft
           sh "syft scan dir:. --exclude ./src/test -o spdx-json@2.3 > '${modifiedName}'"
@@ -57,9 +51,6 @@ pipeline {
           def fileNameOnly = fullPath.tokenize('/').last()
           def workspaceDir = pwd()
 
-          echo "*** CORONA_SPDX_FILE_PATH in push stage = ${fullPath}, fileNameOnly = ${fileNameOnly}"
-          echo "Workspace directory: ${workspaceDir}"
-  
           sh """
             echo fullPath in push stage = $fullPath, fileNameOnly = $fileNameOnly
             docker run -d \
