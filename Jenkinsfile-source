@@ -3,7 +3,7 @@ pipeline {
 
   // Added for upload_spdx_to_corona
   environment {
-    CORONA_PAT = credentials("corona-pat")
+    CORONA_PAT = credentials('corona-pat')
     CORONA_HOST = 'corona.cisco.com'
     CORONA_USERNAME = 'tedgcisco.gen'
     CORONA_ENGINEERING_CONTACT = 'tedg-corona-eng-mailer'
