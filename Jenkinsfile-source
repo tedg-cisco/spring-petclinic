@@ -29,7 +29,7 @@ pipeline {
 
           def today = sh(script: 'date +%Y.%m.%d', returnStdout: true).trim()
           def baseName = env.CORONA_SPDX_FILE_PATH.replaceAll(/\.json$/, '')
-          def modifiedName = "${baseName}_${today}_${env.BUILD_NUMBER}.json"
+          def modifiedName = "${pwd()}/${baseName}_${today}_${env.BUILD_NUMBER}.json"
 
           echo "Generated modifiedName = ${modifiedName}"
 
@@ -40,12 +40,6 @@ pipeline {
 //          sh "syft scan dir:. --exclude ./src/test -o spdx-json@2.3 > '${modifiedName}'"
           sh "syft scan dir:. --exclude ./src/test -o spdx-json@2.3 > \"\\\$(pwd)/${modifiedName}\""
           sh "ls -alt \"\\\$(pwd)/${modifiedName}\""
-
-//          def workspaceDir = pwd()
-
-          // Create the SBOM file with Syft
-     //     sh "syft scan dir:. --exclude ./src/test -o spdx-json@2.3 > \"\\\$(pwd)/${modifiedName}\""
-       //   sh "ls -alt \"\\\$(pwd)/${modifiedName}\""
         }
       }
     }
