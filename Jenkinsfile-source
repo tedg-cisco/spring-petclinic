@@ -25,18 +25,20 @@ pipeline {
     stage('Generate SBOM') {
       steps {
         script {
-          echo "Initial CORONA_SPDX_FILE_PATH = ${env.CORONA_SPDX_FILE_PATH}"
+          //echo "Initial CORONA_SPDX_FILE_PATH = ${env.CORONA_SPDX_FILE_PATH}"
+          def initialFilePath = env.CORONA_SPDX_FILE_PATH
+          echo "Initial CORONA_SPDX_FILE_PATH = ${initialFilePath}"
 
           def today = sh(script: 'date +%Y.%m.%d', returnStdout: true).trim()
-          def baseName = env.CORONA_SPDX_FILE_PATH.replaceAll(/\.json$/, '')
+          def baseName = initialFilePath.replaceAll(/\.json$/, '')
           def modifiedName = "${pwd()}/${baseName}_${today}_${env.BUILD_NUMBER}.json"
 
           echo "*** Generate SBOM modified CORONA_SPDX_FILE_PATH = ${modifiedName}"
 
           // Save to another env variable for this build lifetime
-          env.CORONA_SPDX_FILE_PATH = ${modifiedName}
+          env.MODIFIED_SPDX_FILE_PATH = modifiedName
 
-          echo "*** Generate SBOM env.CORONA_SPDX_FILE_PATH update to = ${env.CORONA_SPDX_FILE_PATH}"
+          echo "*** Generate SBOM env.MODIFIED_SPDX_FILE_PATH update to = ${env.MODIFIED_SPDX_FILE_PATH}"
 
           // Create the SBOM file with Syft
           sh "syft scan dir:. --exclude ./src/test -o spdx-json@2.3 > '${modifiedName}'"
@@ -51,7 +53,7 @@ pipeline {
         sh 'docker pull containers.cisco.com/tedg/upload_spdx'
 
         script {
-          def fullPath = env.CORONA_SPDX_FILE_PATH
+          def fullPath = env.MODIFIED_SPDX_FILE_PATH
           def workspaceDir = pwd()
 
           echo "*** CORONA_SPDX_FILE_PATH in push stage: ${fullPath}"
