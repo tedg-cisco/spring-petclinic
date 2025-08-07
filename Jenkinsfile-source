@@ -43,7 +43,7 @@ pipeline {
           // Create the SBOM file with Syft
           sh "syft scan dir:. --exclude ./src/test -o spdx-json@2.3 > '${modifiedName}'"
           sh "ls -alt '${modifiedName}'"
-          sh """ jq '(.packages[] | select(.versionInfo == null) | .versionInfo) = "UNKNOWN"' '${modifiedName}' > '${modifiedName}.vers' """
+          sh """ jq '(.packages[] | select(.versionInfo == null) | .versionInfo) = "NOASSERTION"' '${modifiedName}' > '${modifiedName}.vers' """
         }
       }
     }
