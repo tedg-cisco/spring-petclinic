@@ -57,7 +57,7 @@ pipeline {
           echo "CORONA_SPDX_FILE_PATH in push stage: ${filename}"
   
           sh '''
-            docker run -d \
+            docker run \
                 -e CORONA_PAT="$CORONA_PAT" \
                 -e CORONA_HOST="$CORONA_HOST" \
                 -e CORONA_USERNAME="$CORONA_USERNAME" \
