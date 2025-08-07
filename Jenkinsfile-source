@@ -31,7 +31,7 @@ pipeline {
           def baseName = env.CORONA_SPDX_FILE_PATH.replaceAll(/\.json$/, '')
           def modifiedName = "${pwd()}/${baseName}_${today}_${env.BUILD_NUMBER}.json"
 
-          echo "Generate SBOM modifiedName = ${modifiedName}"
+          echo "*** Generate SBOM modified CORONA_SPDX_FILE_PATH = ${modifiedName}"
 
           // Save to another env variable for this build lifetime
           env.CORONA_SPDX_FILE_PATH = modifiedName
@@ -50,11 +50,9 @@ pipeline {
 
         script {
           def fullPath = env.CORONA_SPDX_FILE_PATH
-          def fileNameOnly = fullPath.tokenize('/').last()
           def workspaceDir = pwd()
 
-          echo "CORONA_SPDX_FILE_PATH in push stage: ${fullPath}"
-          echo "SBOM filename only: ${fileNameOnly}"
+          echo "*** CORONA_SPDX_FILE_PATH in push stage: ${fullPath}"
           echo "Workspace directory: ${workspaceDir}"
   
           sh """
