@@ -37,9 +37,8 @@ pipeline {
           env.CORONA_SPDX_FILE_PATH = modifiedName
 
           // Create the SBOM file with Syft
-//          sh "syft scan dir:. --exclude ./src/test -o spdx-json@2.3 > '${modifiedName}'"
-          sh "syft scan dir:. --exclude ./src/test -o spdx-json@2.3 > \"\\\$(pwd)/${modifiedName}\""
-          sh "ls -alt \"\\\$(pwd)/${modifiedName}\""
+          sh "syft scan dir:. --exclude ./src/test -o spdx-json@2.3 > '${modifiedName}'"
+          sh "ls -alt '${modifiedName}'"
         }
       }
     }
