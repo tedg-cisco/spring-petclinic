@@ -52,7 +52,6 @@ pipeline {
           def workspaceDir = pwd()
 
           sh """
-            echo fullPath in push stage = $fullPath, fileNameOnly = $fileNameOnly
             docker run -d \
                 -e CORONA_PAT="$CORONA_PAT" \
                 -e CORONA_HOST="$CORONA_HOST" \
