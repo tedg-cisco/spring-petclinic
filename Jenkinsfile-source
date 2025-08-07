@@ -34,7 +34,7 @@ pipeline {
           echo "*** Generate SBOM modified CORONA_SPDX_FILE_PATH = ${modifiedName}"
 
           // Save to another env variable for this build lifetime
-          env.CORONA_SPDX_FILE_PATH = modifiedName
+          env.CORONA_SPDX_FILE_PATH = ${modifiedName}
 
           echo "*** Generate SBOM env.CORONA_SPDX_FILE_PATH update to = ${env.CORONA_SPDX_FILE_PATH}"
 
