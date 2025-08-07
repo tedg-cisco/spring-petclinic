@@ -10,7 +10,7 @@ pipeline {
     CORONA_SECURITY_CONTACT = 'tedg-corona-sec-mailer'
     // These env variables specify the Corona Product/Release/Image 
     // and locally created SPDX file to upload
-    CORONA_PRODUCT_NAME = 'Test - spring-petclinic SPDX Upload'
+    CORONA_PRODUCT_NAME = 'spring-petclinic SPDX Upload - TEST'
     CORONA_RELEASE_VERSION = '1.1'
     CORONA_IMAGE_NAME = 'spring-petclinic.spdx.json' + ".${env.BUILD_NUMBER}"
     CORONA_SPDX_FILE_PATH = 'spring-petclinic.spdx.json'
