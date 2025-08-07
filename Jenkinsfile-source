@@ -57,7 +57,7 @@ pipeline {
           echo "SBOM filename only: ${fileNameOnly}"
           echo "Workspace directory: ${workspaceDir}"
   
-          sh '''
+          sh """
             docker run \
                 -e CORONA_PAT="$CORONA_PAT" \
                 -e CORONA_HOST="$CORONA_HOST" \
@@ -70,7 +70,7 @@ pipeline {
                 -e CORONA_SPDX_FILE_PATH="$fullPath" \
                 -v \$(PWD)/$fullPath:/app/$fileNameOnly \
                 containers.cisco.com/tedg/upload_spdx 
-          '''
+          """
         }
       }
     }
