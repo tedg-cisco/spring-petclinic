@@ -43,7 +43,6 @@ pipeline {
           // Create the SBOM file with Syft
           sh "syft scan dir:. --exclude ./src/test -o spdx-json@2.3 > '${modifiedName}'"
           sh "ls -alt '${modifiedName}'"
-          sh """ jq '(.packages[] | select(.versionInfo == null) | .versionInfo) = "NOASSERTION"' '${modifiedName}' > '${modifiedName}.vers' """
         }
       }
     }
@@ -63,7 +62,7 @@ pipeline {
   
           sh """
             echo fullPath in push stage = $fullPath, fileNameOnly = $fileNameOnly
-            docker run \
+            docker run -d \
                 -e CORONA_PAT="$CORONA_PAT" \
                 -e CORONA_HOST="$CORONA_HOST" \
                 -e CORONA_USERNAME="$CORONA_USERNAME" \
