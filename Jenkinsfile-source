@@ -25,10 +25,10 @@ pipeline {
     stage('Generate SBOM') {
       steps {
         script {
-          echo "Initial BASE_JSON_FILE = ${env.BASE_JSON_FILE}"
+          echo "Initial CORONA_SPDX_FILE_PATH = ${env.CORONA_SPDX_FILE_PATH}"
 
           def today = sh(script: 'date +%Y.%m.%d', returnStdout: true).trim()
-          def baseName = env.BASE_JSON_FILE.replaceAll(/\.json$/, '')
+          def baseName = env.CORONA_SPDX_FILE_PATH.replaceAll(/\.json$/, '')
           def modifiedName = "${baseName}.${env.BUILD_NUMBER}.${today}.json"
 
           echo "Generated modifiedName = ${modifiedName}"
