@@ -41,7 +41,7 @@ pipeline {
           echo "*** Generate SBOM env.MODIFIED_SPDX_FILE_PATH update to = ${env.MODIFIED_SPDX_FILE_PATH}"
 
           // Create the SBOM file with Syft
-          sh "syft scan dir:. --exclude ./src/test -o spdx-json@2.3 > '${modifiedName}'"
+          sh "syft scan dir:. --exclude ./src/test -o spdx-json@3.0.1 > '${modifiedName}'"
           sh "ls -alt '${modifiedName}'"
         }
       }
