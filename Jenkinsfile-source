@@ -25,7 +25,7 @@ pipeline {
     stage('Generate SBOM') {
       steps {
         script {
-          //echo "Initial CORONA_SPDX_FILE_PATH = ${env.CORONA_SPDX_FILE_PATH}"
+          // Added for upload_spdx_to_corona
           def initialFilePath = env.CORONA_SPDX_FILE_PATH
           echo "Initial CORONA_SPDX_FILE_PATH = ${initialFilePath}"
 
