@@ -31,7 +31,7 @@ pipeline {
           def baseName = env.CORONA_SPDX_FILE_PATH.replaceAll(/\.json$/, '')
           def modifiedName = "${pwd()}/${baseName}_${today}_${env.BUILD_NUMBER}.json"
 
-          echo "Generated modifiedName = ${modifiedName}"
+          echo "Generate SBOM modifiedName = ${modifiedName}"
 
           // Save to another env variable for this build lifetime
           env.CORONA_SPDX_FILE_PATH = modifiedName
@@ -53,6 +53,11 @@ pipeline {
           echo "CORONA_SPDX_FILE_PATH in push stage: ${filename}"
   
           sh '''
+            def today = sh(script: 'date +%Y.%m.%d', returnStdout: true).trim()
+            def baseName = env.CORONA_SPDX_FILE_PATH.replaceAll(/\.json$/, '')
+            def modifiedName = "${pwd()}/${baseName}_${today}_${env.BUILD_NUMBER}.json"
+            echo "Push SBOM modifiedName = ${modifiedName}"
+
             docker run \
                 -e CORONA_PAT="$CORONA_PAT" \
                 -e CORONA_HOST="$CORONA_HOST" \
@@ -62,8 +67,8 @@ pipeline {
                 -e CORONA_PRODUCT_NAME="$CORONA_PRODUCT_NAME" \
                 -e CORONA_RELEASE_VERSION="$CORONA_RELEASE_VERSION" \
                 -e CORONA_IMAGE_NAME="$CORONA_IMAGE_NAME" \
-                -e CORONA_SPDX_FILE_PATH="$filename" \
-                -v \$(PWD)/$filename:/app/$filename \
+                -e CORONA_SPDX_FILE_PATH="$modifiedName" \
+                -v \$(PWD)/$filename:/app/$modifiedName \
                 containers.cisco.com/tedg/upload_spdx 
           '''
         }
